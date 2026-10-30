@@ -18,3 +18,6 @@ captures
 **/xcshareddata/WorkspaceSettings.xcsettings
 node_modules/
 kotlin-js-store/
+actualizar_profesor.bat
+guardar_mis_cambios.bat
+crear_nueva_rama.bat
