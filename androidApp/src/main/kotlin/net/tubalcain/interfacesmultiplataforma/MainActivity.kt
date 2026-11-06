@@ -1,6 +1,5 @@
 package net.tubalcain.interfacesmultiplataforma
 
-import SpotifyCloneApp
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent

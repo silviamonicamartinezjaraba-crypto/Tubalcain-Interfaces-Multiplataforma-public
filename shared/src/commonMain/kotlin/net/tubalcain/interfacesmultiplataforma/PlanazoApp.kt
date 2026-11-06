@@ -112,6 +112,7 @@ fun PlanazoApp() {
         evento.nombre.contains(busqueda, ignoreCase = true) &&
                 (categoriaElegida == "Todos" ||
                         evento.categoria == categoriaElegida)
+
     }
 
     MaterialTheme {
