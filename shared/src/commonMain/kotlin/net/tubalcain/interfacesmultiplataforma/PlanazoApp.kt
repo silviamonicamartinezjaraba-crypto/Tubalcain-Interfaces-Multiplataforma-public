@@ -1,5 +1,6 @@
 package net.tubalcain.interfacesmultiplataforma
 
+import BotonLimpiarFiltros
 import androidx.compose.foundation.background
 import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Arrangement
@@ -13,15 +14,10 @@ import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
-import androidx.compose.material3.Card
-import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.FilterChip
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
-import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
@@ -181,21 +177,14 @@ fun PlanazoApp() {
 
                     // BUSCADOR
                     item {
-                        OutlinedTextField(
-                            value = busqueda,
-                            onValueChange = {
-                                busqueda = it
-                            },
-                            label = {
-                                Text("Buscar eventos")
+                        BuscadorEventos(
+                            texto = busqueda,
+                            onTextoChange = { nuevoTexto ->
+                                busqueda = nuevoTexto
                             },
                             modifier = Modifier
                                 .widthIn(max = 850.dp)
-                                .fillMaxWidth(),
-                            singleLine = true,
-                            colors = OutlinedTextFieldDefaults.colors(
-                                focusedTextColor = Color.White
-                            )
+                                .fillMaxWidth()
                         )
                     }
 
@@ -215,26 +204,43 @@ fun PlanazoApp() {
                                 "Creadores"
                             ).forEach { categoria ->
 
-                                FilterChip(
-                                    selected = categoriaElegida == categoria,
+                                CategoriaChip(
+                                    categoria = categoria,
+                                    seleccionada =
+                                        categoriaElegida == categoria,
                                     onClick = {
                                         categoriaElegida = categoria
-                                    },
-                                    label = {
-                                        Text(categoria)
                                     }
                                 )
                             }
                         }
                     }
 
+                    item {
+                        BotonLimpiarFiltros(
+                            onClick = {
+                                busqueda = ""
+                                categoriaElegida = "Todos"
+                            }
+                        )
+                    }
+
+                    item {
+                        Text(
+                            text = "Eventos encontrados: " +
+                                    eventosFiltrados.size,
+                            color = Color.LightGray,
+                            modifier = Modifier
+                                .widthIn(max = 850.dp)
+                                .fillMaxWidth()
+                        )
+                    }
+
                     // LISTA DE EVENTOS
                     items(eventosFiltrados) { evento ->
 
-                        Card(
-                            modifier = Modifier
-                                .widthIn(max = 850.dp)
-                                .fillMaxWidth(),
+                        EventoCard(
+                            evento = evento,
                             onClick = {
                                 eventoSeleccionado = evento
                                 pantalla = "detalle"
@@ -242,53 +248,8 @@ fun PlanazoApp() {
                                 nombre = ""
                                 correo = ""
                                 inscrito = false
-                            },
-                            shape = RoundedCornerShape(12.dp),
-                            colors = CardDefaults.cardColors(
-                                containerColor = tarjeta
-                            )
-                        ) {
-                            Row(
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .padding(20.dp),
-                                verticalAlignment = Alignment.CenterVertically,
-                                horizontalArrangement = Arrangement.spacedBy(16.dp)
-                            ) {
-
-                                Text(
-                                    evento.emoji,
-                                    fontSize = 36.sp
-                                )
-
-                                Column(
-                                    modifier = Modifier.weight(1f)
-                                ) {
-                                    Text(
-                                        evento.nombre,
-                                        color = Color.White,
-                                        fontSize = 20.sp,
-                                        fontWeight = FontWeight.Bold
-                                    )
-
-                                    Text(
-                                        evento.categoria,
-                                        color = morado
-                                    )
-
-                                    Text(
-                                        evento.fecha,
-                                        color = Color.LightGray
-                                    )
-                                }
-
-                                Text(
-                                    "›",
-                                    color = morado,
-                                    fontSize = 30.sp
-                                )
                             }
-                        }
+                        )
                     }
 
                     if (eventosFiltrados.isEmpty()) {
