@@ -25,6 +25,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -45,7 +46,6 @@ data class Evento(
 fun PlanazoApp() {
 
     val fondo = Color(0xFF101018)
-    val tarjeta = Color(0xFF252535)
     val morado = Color(0xFFB5A2FF)
 
     val eventos = remember {
@@ -89,7 +89,7 @@ fun PlanazoApp() {
     }
 
     // ESTADOS
-    var busqueda by remember { mutableStateOf("") }
+    var busqueda by rememberSaveable { mutableStateOf("") }
     var categoriaElegida by remember { mutableStateOf("Todos") }
 
     // NAVEGACIÓN
@@ -154,25 +154,15 @@ fun PlanazoApp() {
 
                 if (pantalla == "lista") {
 
-                    // TÍTULO
+                    // TÍTULO Y SUBTÍTULO
                     item {
-                        Column(
+                        CabeceraSeccion(
+                            titulo = "¿Qué plan tienes?",
+                            subtitulo = "Descubre eventos que no te puedes perder",
                             modifier = Modifier
                                 .widthIn(max = 850.dp)
                                 .fillMaxWidth()
-                        ) {
-                            Text(
-                                "¿Qué plan tienes?",
-                                color = Color.White,
-                                fontSize = 28.sp,
-                                fontWeight = FontWeight.Bold
-                            )
-
-                            Text(
-                                "Descubre eventos que no te puedes perder",
-                                color = Color.LightGray
-                            )
-                        }
+                        )
                     }
 
                     // BUSCADOR
@@ -226,6 +216,14 @@ fun PlanazoApp() {
                     }
 
                     item {
+                        // Título y subtítulo
+                        CabeceraSeccion(
+                            titulo = "Eventos actuales",
+                            subtitulo = "Apúntate a ellos!"
+                        )
+                    }
+
+                    item {
                         Text(
                             text = "Eventos encontrados: " +
                                     eventosFiltrados.size,
@@ -233,6 +231,18 @@ fun PlanazoApp() {
                             modifier = Modifier
                                 .widthIn(max = 850.dp)
                                 .fillMaxWidth()
+                        )
+                    }
+
+                    //Evento destacado
+                    item {
+                        EventoDestacado(
+                            evento = eventos[1],
+                            onClick = {
+                                eventoSeleccionado = eventos[1]
+                                pantalla = "detalle"
+                                inscrito = false
+                            }
                         )
                     }
 
@@ -252,11 +262,13 @@ fun PlanazoApp() {
                         )
                     }
 
+                    // Cuando no encuentra ningún evento con el mismo nombre
                     if (eventosFiltrados.isEmpty()) {
                         item {
-                            Text(
-                                "No se encontraron eventos",
-                                color = Color.LightGray
+                            EstadoVacio(
+                                emoji = "⬜",
+                                titulo = "No se ha encontrado ningún evento con ese nombre",
+                                mensaje = "Introduce otro evento"
                             )
                         }
                     }
@@ -308,12 +320,13 @@ fun PlanazoApp() {
 
                                 HorizontalDivider()
 
-                                Text(
-                                    "Apúntate al evento",
-                                    color = Color.White,
-                                    fontSize = 22.sp,
-                                    fontWeight = FontWeight.Bold
-                                )
+                                // TÍTULO Y SUBTÍTULO
+                                    CabeceraSeccion(
+                                        titulo = "¿Qué plan tienes?",
+                                        modifier = Modifier
+                                            .widthIn(max = 850.dp)
+                                            .fillMaxWidth()
+                                    )
 
                                 OutlinedTextField(
                                     value = nombre,

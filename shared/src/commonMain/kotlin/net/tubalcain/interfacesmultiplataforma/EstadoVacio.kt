@@ -19,10 +19,15 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 
 @Composable
-
+        /**
+         * Esto es un componente reutilizable que muestra un texto cuando
+         * no encuentra ningún evento al escribirlo en el buscador y te
+         * dice que introduzcas otro evento
+         */
 fun EstadoVacio(
-    evento: Evento,
-    onClick: () -> Unit,
+    titulo: String,
+    mensaje: String,
+    emoji: String = " ",
     modifier: Modifier = Modifier
 ) {
     val tarjeta = Color(0xFF252535)
@@ -32,7 +37,6 @@ fun EstadoVacio(
         modifier = modifier
             .widthIn(max = 850.dp)
             .fillMaxWidth(),
-        onClick = onClick,
         shape = RoundedCornerShape(12.dp),
         colors = CardDefaults.cardColors(
             containerColor = tarjeta
@@ -46,7 +50,7 @@ fun EstadoVacio(
             horizontalArrangement = Arrangement.spacedBy(16.dp)
         ) {
             Text(
-                text = evento.emoji,
+                text = emoji,
                 fontSize = 36.sp
             )
 
@@ -54,28 +58,17 @@ fun EstadoVacio(
                 modifier = Modifier.weight(1f)
             ) {
                 Text(
-                    text = evento.nombre,
+                    text = titulo,
                     color = Color.White,
                     fontSize = 20.sp,
                     fontWeight = FontWeight.Bold
                 )
 
                 Text(
-                    text = evento.categoria,
+                    text = mensaje,
                     color = naranja
                 )
-
-                Text(
-                    text = evento.fecha,
-                    color = Color.LightGray
-                )
             }
-
-            Text(
-                text = "›",
-                color = naranja,
-                fontSize = 30.sp
-            )
         }
     }
 }

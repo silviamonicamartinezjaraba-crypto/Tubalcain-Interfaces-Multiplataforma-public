@@ -20,20 +20,23 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 
 @Composable
-
+/**
+ * Esto es un componente reutilizable que muestra un evento destacado
+ * mediante un botón con onClick que comunica con PlanazoApp
+ * */
 fun EventoDestacado(
     evento: Evento,
     onClick: () -> Unit,
+    textoBoton: String = "Ver evento",
     modifier: Modifier = Modifier
 ) {
-    val tarjeta = Color(0x261500)
-    val naranja = Color(0xFF9900)
+    val tarjeta = Color(0xFF261500)
+    val naranja = Color(0xFFFF9900)
 
     Card(
         modifier = modifier
             .widthIn(max = 800.dp)
             .fillMaxWidth(),
-        onClick = onClick,
         shape = RoundedCornerShape(15.dp),
         colors = CardDefaults.cardColors(
             containerColor = tarjeta
@@ -71,13 +74,8 @@ fun EventoDestacado(
                     color = naranja
                 )
             }
-
-            Text(
-                text = "›",
-                color = naranja,
-                fontSize = 30.sp
-            )
         }
+        // Botón que comunica con PlanazoApp y muestra el evento destacado
         Button(
             onClick = {
                 onClick()
@@ -86,8 +84,8 @@ fun EventoDestacado(
             modifier = Modifier.fillMaxWidth()
         ) {
             Text(
-                text = "Ver evento",
-                fontSize = 16.sp
+                text = textoBoton,
+                fontSize = 18.sp
             )
         }
     }
