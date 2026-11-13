@@ -1,4 +1,4 @@
-package net.tubalcain.interfacesmultiplataforma
+package net.tubalcain.interfacesmultiplataforma.planazoApp
 
 import BotonLimpiarFiltros
 import androidx.compose.foundation.background
@@ -18,14 +18,21 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+<<<<<<<< HEAD:shared/src/commonMain/kotlin/net/tubalcain/interfacesmultiplataforma/PlanazoAppTarea3.kt
 import androidx.compose.runtime.saveable.rememberSaveable
+========
+import androidx.compose.runtime.rememberCoroutineScope
+>>>>>>>> main:shared/src/commonMain/kotlin/net/tubalcain/interfacesmultiplataforma/planazoApp/PlanazoApp.kt
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -33,6 +40,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import kotlinx.coroutines.launch
 
 data class Evento(
     val nombre: String,
@@ -91,6 +99,7 @@ fun PlanazoAppTarea3() {
     // ESTADOS
     var busqueda by rememberSaveable { mutableStateOf("") }
     var categoriaElegida by remember { mutableStateOf("Todos") }
+    var mostrarDescripciones by remember { mutableStateOf(false) }
 
     // NAVEGACIÓN
     var pantalla by remember { mutableStateOf("lista") }
@@ -111,11 +120,17 @@ fun PlanazoAppTarea3() {
 
     }
 
+    // SNACKBAR
+    val snackbarHostState = remember { SnackbarHostState() }
+    val scope = rememberCoroutineScope()
+
     MaterialTheme {
 
         Scaffold(
+            snackbarHost = {
+                SnackbarHost(snackbarHostState)
+            },
             containerColor = fondo,
-
             topBar = {
                 Row(
                     modifier = Modifier
@@ -207,12 +222,32 @@ fun PlanazoAppTarea3() {
                     }
 
                     item {
-                        BotonLimpiarFiltros(
-                            onClick = {
-                                busqueda = ""
-                                categoriaElegida = "Todos"
+
+                        Row(
+                            modifier = Modifier.fillMaxWidth(),
+                            horizontalArrangement = Arrangement.spacedBy(16.dp)
+                        ) {
+                            BotonLimpiarFiltros(
+                                onClick = {
+                                    busqueda = ""
+                                    categoriaElegida = "Todos"
+                                }
+                            )
+
+                            Button(
+                                onClick = {
+                                    mostrarDescripciones = !mostrarDescripciones
+                                }
+                            ) {
+                                Text(
+                                    if (mostrarDescripciones)
+                                        "Ocultar descripciones"
+                                    else
+                                        "Mostrar descripciones"
+                                )
                             }
-                        )
+                        }
+
                     }
 
                     item {
@@ -234,6 +269,7 @@ fun PlanazoAppTarea3() {
                         )
                     }
 
+<<<<<<<< HEAD:shared/src/commonMain/kotlin/net/tubalcain/interfacesmultiplataforma/PlanazoAppTarea3.kt
                     //Evento destacado
                     item {
                         EventoDestacado(
@@ -244,13 +280,21 @@ fun PlanazoAppTarea3() {
                                 inscrito = false
                             }
                         )
+========
+                    item {
+                        EjemploAnimacion()
+>>>>>>>> main:shared/src/commonMain/kotlin/net/tubalcain/interfacesmultiplataforma/planazoApp/PlanazoApp.kt
                     }
 
                     // LISTA DE EVENTOS
                     items(eventosFiltrados) { evento ->
-
                         EventoCard(
                             evento = evento,
+                            mostrarDescripcion = mostrarDescripciones,
+                            colorFondo = if (evento.categoria == "Música")
+                                Color(0xFF7B2FF7)
+                            else
+                                Color(0xFF252535),
                             onClick = {
                                 eventoSeleccionado = evento
                                 pantalla = "detalle"
@@ -337,7 +381,16 @@ fun PlanazoAppTarea3() {
                                         Text("Nombre")
                                     },
                                     modifier = Modifier.fillMaxWidth(),
-                                    singleLine = true
+                                    singleLine = true,
+                                    colors = OutlinedTextFieldDefaults.colors(
+                                        focusedTextColor = Color.White,
+                                        unfocusedTextColor = Color.White,
+                                        cursorColor = Color.White,
+                                        focusedLabelColor = morado,
+                                        unfocusedLabelColor = Color.LightGray,
+                                        focusedBorderColor = morado,
+                                        unfocusedBorderColor = Color.Gray
+                                    )
                                 )
 
                                 OutlinedTextField(
@@ -349,18 +402,55 @@ fun PlanazoAppTarea3() {
                                         Text("Correo electrónico")
                                     },
                                     modifier = Modifier.fillMaxWidth(),
-                                    singleLine = true
+                                    singleLine = true,
+                                    colors = OutlinedTextFieldDefaults.colors(
+                                        focusedTextColor = Color.White,
+                                        unfocusedTextColor = Color.White,
+                                        cursorColor = Color.White,
+                                        focusedLabelColor = morado,
+                                        unfocusedLabelColor = Color.LightGray,
+                                        focusedBorderColor = morado,
+                                        unfocusedBorderColor = Color.Gray
+                                    )
                                 )
 
                                 Button(
                                     onClick = {
-                                        inscrito = true
+                                        scope.launch {
+                                            when {
+                                                nombre.isBlank() -> {
+                                                    snackbarHostState.showSnackbar(
+                                                        "Introduce tu nombre"
+                                                    )
+                                                }
+
+                                                correo.isBlank() -> {
+                                                    snackbarHostState.showSnackbar(
+                                                        "Introduce tu correo electrónico"
+                                                    )
+                                                }
+
+                                                !correo.contains("@") -> {
+                                                    snackbarHostState.showSnackbar(
+                                                        "Introduce un correo electrónico válido"
+                                                    )
+                                                }
+
+                                                else -> {
+                                                    inscrito = true
+
+                                                    snackbarHostState.showSnackbar(
+                                                        "¡Inscripción realizada correctamente!"
+                                                    )
+                                                }
+                                            }
+                                        }
                                     },
-                                    enabled = nombre.isNotBlank() &&
-                                            correo.contains("@")
+                                    modifier = Modifier.fillMaxWidth()
                                 ) {
                                     Text("Apuntarme")
                                 }
+
 
                                 if (inscrito) {
                                     Text(
