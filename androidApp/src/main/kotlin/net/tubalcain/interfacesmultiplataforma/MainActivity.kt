@@ -7,6 +7,7 @@ import androidx.activity.enableEdgeToEdge
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.tooling.preview.Preview
 import net.tubalcain.interfacesmultiplataforma.planazoApp.PlanazoApp
+import net.tubalcain.interfacesmultiplataforma.planazoApp.PlanazoAppTarea3
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -14,7 +15,7 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
 
         setContent {
-            PlanazoAppTarea3()
+            PlanazoApp()
         }
     }
 }

@@ -28,11 +28,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-<<<<<<<< HEAD:shared/src/commonMain/kotlin/net/tubalcain/interfacesmultiplataforma/PlanazoAppTarea3.kt
-import androidx.compose.runtime.saveable.rememberSaveable
-========
 import androidx.compose.runtime.rememberCoroutineScope
->>>>>>>> main:shared/src/commonMain/kotlin/net/tubalcain/interfacesmultiplataforma/planazoApp/PlanazoApp.kt
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -51,7 +48,7 @@ data class Evento(
 )
 
 @Composable
-fun PlanazoAppTarea3() {
+fun PlanazoApp() { // Nombre actualizado para coincidir con la carpeta del profesor
 
     val fondo = Color(0xFF101018)
     val morado = Color(0xFFB5A2FF)
@@ -103,9 +100,7 @@ fun PlanazoAppTarea3() {
 
     // NAVEGACIÓN
     var pantalla by remember { mutableStateOf("lista") }
-    var eventoSeleccionado by remember {
-        mutableStateOf<Evento?>(null)
-    }
+    var eventoSeleccionado by remember { mutableStateOf<Evento?>(null) }
 
     // FORMULARIO
     var nombre by remember { mutableStateOf("") }
@@ -125,7 +120,6 @@ fun PlanazoAppTarea3() {
     val scope = rememberCoroutineScope()
 
     MaterialTheme {
-
         Scaffold(
             snackbarHost = {
                 SnackbarHost(snackbarHostState)
@@ -147,17 +141,11 @@ fun PlanazoAppTarea3() {
                         fontWeight = FontWeight.Bold
                     )
 
-                    Text(
-                        "DAM2",
-                        color = morado
-                    )
+                    Text("DAM2", color = morado)
                 }
             }
 
         ) { padding ->
-
-            // La LazyColumn ocupa toda la pantalla.
-            // El contenido se limita a 850.dp.
             LazyColumn(
                 modifier = Modifier
                     .fillMaxSize()
@@ -166,34 +154,24 @@ fun PlanazoAppTarea3() {
                 horizontalAlignment = Alignment.CenterHorizontally,
                 verticalArrangement = Arrangement.spacedBy(16.dp)
             ) {
-
                 if (pantalla == "lista") {
 
-                    // TÍTULO Y SUBTÍTULO
                     item {
                         CabeceraSeccion(
                             titulo = "¿Qué plan tienes?",
                             subtitulo = "Descubre eventos que no te puedes perder",
-                            modifier = Modifier
-                                .widthIn(max = 850.dp)
-                                .fillMaxWidth()
+                            modifier = Modifier.widthIn(max = 850.dp).fillMaxWidth()
                         )
                     }
 
-                    // BUSCADOR
                     item {
                         BuscadorEventos(
                             texto = busqueda,
-                            onTextoChange = { nuevoTexto ->
-                                busqueda = nuevoTexto
-                            },
-                            modifier = Modifier
-                                .widthIn(max = 850.dp)
-                                .fillMaxWidth()
+                            onTextoChange = { busqueda = it },
+                            modifier = Modifier.widthIn(max = 850.dp).fillMaxWidth()
                         )
                     }
 
-                    // FILTROS POR CATEGORÍA
                     item {
                         Row(
                             modifier = Modifier
@@ -202,91 +180,69 @@ fun PlanazoAppTarea3() {
                                 .horizontalScroll(rememberScrollState()),
                             horizontalArrangement = Arrangement.spacedBy(8.dp)
                         ) {
-                            listOf(
-                                "Todos",
-                                "Música",
-                                "Gaming",
-                                "Creadores"
-                            ).forEach { categoria ->
-
+                            listOf("Todos", "Música", "Gaming", "Creadores").forEach { categoria ->
                                 CategoriaChip(
                                     categoria = categoria,
-                                    seleccionada =
-                                        categoriaElegida == categoria,
-                                    onClick = {
-                                        categoriaElegida = categoria
-                                    }
+                                    seleccionada = categoriaElegida == categoria,
+                                    onClick = { categoriaElegida = categoria }
                                 )
                             }
                         }
                     }
 
                     item {
-
                         Row(
-                            modifier = Modifier.fillMaxWidth(),
+                            modifier = Modifier.fillMaxWidth().widthIn(max = 850.dp),
                             horizontalArrangement = Arrangement.spacedBy(16.dp)
                         ) {
-                            BotonLimpiarFiltros(
-                                onClick = {
-                                    busqueda = ""
-                                    categoriaElegida = "Todos"
-                                }
-                            )
+                            BotonLimpiarFiltros(onClick = {
+                                busqueda = ""
+                                categoriaElegida = "Todos"
+                            })
 
-                            Button(
-                                onClick = {
-                                    mostrarDescripciones = !mostrarDescripciones
-                                }
-                            ) {
-                                Text(
-                                    if (mostrarDescripciones)
-                                        "Ocultar descripciones"
-                                    else
-                                        "Mostrar descripciones"
-                                )
+                            Button(onClick = { mostrarDescripciones = !mostrarDescripciones }) {
+                                Text(if (mostrarDescripciones) "Ocultar descripciones" else "Mostrar descripciones")
                             }
                         }
-
                     }
 
                     item {
-                        // Título y subtítulo
                         CabeceraSeccion(
                             titulo = "Eventos actuales",
-                            subtitulo = "Apúntate a ellos!"
+                            subtitulo = "Apúntate a ellos!",
+                            modifier = Modifier.widthIn(max = 850.dp).fillMaxWidth()
                         )
                     }
 
                     item {
                         Text(
-                            text = "Eventos encontrados: " +
-                                    eventosFiltrados.size,
+                            text = "Eventos encontrados: " + eventosFiltrados.size,
                             color = Color.LightGray,
-                            modifier = Modifier
-                                .widthIn(max = 850.dp)
-                                .fillMaxWidth()
+                            modifier = Modifier.widthIn(max = 850.dp).fillMaxWidth()
                         )
                     }
 
-<<<<<<<< HEAD:shared/src/commonMain/kotlin/net/tubalcain/interfacesmultiplataforma/PlanazoAppTarea3.kt
-                    //Evento destacado
-                    item {
-                        EventoDestacado(
-                            evento = eventos[1],
-                            onClick = {
-                                eventoSeleccionado = eventos[1]
-                                pantalla = "detalle"
-                                inscrito = false
-                            }
-                        )
-========
-                    item {
-                        EjemploAnimacion()
->>>>>>>> main:shared/src/commonMain/kotlin/net/tubalcain/interfacesmultiplataforma/planazoApp/PlanazoApp.kt
+                    // Evento destacado integrado (tu código)
+                    if (eventosFiltrados.isNotEmpty()) {
+                        item {
+                            EventoDestacado(
+                                evento = eventosFiltrados[0],
+                                onClick = {
+                                    eventoSeleccionado = eventosFiltrados[0]
+                                    pantalla = "detalle"
+                                    inscrito = false
+                                }
+                            )
+                        }
                     }
 
-                    // LISTA DE EVENTOS
+                    // Animación del profesor
+                    // (Descomenta esto si tienes el archivo EjemploAnimacion.kt en tu proyecto)
+                    // item {
+                    //     EjemploAnimacion()
+                    // }
+
+                    // LISTA DE EVENTOS (Tu código + el color del profesor)
                     items(eventosFiltrados) { evento ->
                         EventoCard(
                             evento = evento,
@@ -298,7 +254,6 @@ fun PlanazoAppTarea3() {
                             onClick = {
                                 eventoSeleccionado = evento
                                 pantalla = "detalle"
-
                                 nombre = ""
                                 correo = ""
                                 inscrito = false
@@ -306,7 +261,6 @@ fun PlanazoAppTarea3() {
                         )
                     }
 
-                    // Cuando no encuentra ningún evento con el mismo nombre
                     if (eventosFiltrados.isEmpty()) {
                         item {
                             EstadoVacio(
@@ -318,68 +272,33 @@ fun PlanazoAppTarea3() {
                     }
 
                 } else {
-
                     // PANTALLA DE DETALLE
                     item {
-
                         Column(
-                            modifier = Modifier
-                                .widthIn(max = 850.dp)
-                                .fillMaxWidth(),
+                            modifier = Modifier.widthIn(max = 850.dp).fillMaxWidth(),
                             verticalArrangement = Arrangement.spacedBy(16.dp)
                         ) {
-
-                            TextButton(
-                                onClick = {
-                                    pantalla = "lista"
-                                }
-                            ) {
+                            TextButton(onClick = { pantalla = "lista" }) {
                                 Text("← Volver")
                             }
 
                             eventoSeleccionado?.let { evento ->
-
-                                Text(
-                                    evento.emoji,
-                                    fontSize = 60.sp
-                                )
-
-                                Text(
-                                    evento.nombre,
-                                    color = Color.White,
-                                    fontSize = 28.sp,
-                                    fontWeight = FontWeight.Bold
-                                )
-
-                                Text(
-                                    evento.fecha,
-                                    color = morado,
-                                    fontSize = 18.sp
-                                )
-
-                                Text(
-                                    evento.descripcion,
-                                    color = Color.LightGray
-                                )
+                                Text(evento.emoji, fontSize = 60.sp)
+                                Text(evento.nombre, color = Color.White, fontSize = 28.sp, fontWeight = FontWeight.Bold)
+                                Text(evento.fecha, color = morado, fontSize = 18.sp)
+                                Text(evento.descripcion, color = Color.LightGray)
 
                                 HorizontalDivider()
 
-                                // TÍTULO Y SUBTÍTULO
-                                    CabeceraSeccion(
-                                        titulo = "¿Qué plan tienes?",
-                                        modifier = Modifier
-                                            .widthIn(max = 850.dp)
-                                            .fillMaxWidth()
-                                    )
+                                CabeceraSeccion(
+                                    titulo = "¿Qué plan tienes?",
+                                    modifier = Modifier.widthIn(max = 850.dp).fillMaxWidth()
+                                )
 
                                 OutlinedTextField(
                                     value = nombre,
-                                    onValueChange = {
-                                        nombre = it
-                                    },
-                                    label = {
-                                        Text("Nombre")
-                                    },
+                                    onValueChange = { nombre = it },
+                                    label = { Text("Nombre") },
                                     modifier = Modifier.fillMaxWidth(),
                                     singleLine = true,
                                     colors = OutlinedTextFieldDefaults.colors(
@@ -395,12 +314,8 @@ fun PlanazoAppTarea3() {
 
                                 OutlinedTextField(
                                     value = correo,
-                                    onValueChange = {
-                                        correo = it
-                                    },
-                                    label = {
-                                        Text("Correo electrónico")
-                                    },
+                                    onValueChange = { correo = it },
+                                    label = { Text("Correo electrónico") },
                                     modifier = Modifier.fillMaxWidth(),
                                     singleLine = true,
                                     colors = OutlinedTextFieldDefaults.colors(
@@ -418,30 +333,12 @@ fun PlanazoAppTarea3() {
                                     onClick = {
                                         scope.launch {
                                             when {
-                                                nombre.isBlank() -> {
-                                                    snackbarHostState.showSnackbar(
-                                                        "Introduce tu nombre"
-                                                    )
-                                                }
-
-                                                correo.isBlank() -> {
-                                                    snackbarHostState.showSnackbar(
-                                                        "Introduce tu correo electrónico"
-                                                    )
-                                                }
-
-                                                !correo.contains("@") -> {
-                                                    snackbarHostState.showSnackbar(
-                                                        "Introduce un correo electrónico válido"
-                                                    )
-                                                }
-
+                                                nombre.isBlank() -> snackbarHostState.showSnackbar("Introduce tu nombre")
+                                                correo.isBlank() -> snackbarHostState.showSnackbar("Introduce tu correo electrónico")
+                                                !correo.contains("@") -> snackbarHostState.showSnackbar("Introduce un correo electrónico válido")
                                                 else -> {
                                                     inscrito = true
-
-                                                    snackbarHostState.showSnackbar(
-                                                        "¡Inscripción realizada correctamente!"
-                                                    )
+                                                    snackbarHostState.showSnackbar("¡Inscripción realizada correctamente!")
                                                 }
                                             }
                                         }
@@ -451,13 +348,8 @@ fun PlanazoAppTarea3() {
                                     Text("Apuntarme")
                                 }
 
-
                                 if (inscrito) {
-                                    Text(
-                                        "¡Inscripción simulada completada!",
-                                        color = morado,
-                                        fontWeight = FontWeight.Bold
-                                    )
+                                    Text("¡Inscripción simulada completada!", color = morado, fontWeight = FontWeight.Bold)
                                 }
                             }
                         }
