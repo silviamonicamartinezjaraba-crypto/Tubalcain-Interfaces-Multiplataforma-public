@@ -43,7 +43,7 @@ data class Evento(
 )
 
 @Composable
-fun PlanazoApp() {
+fun PlanazoAppTarea3() {
 
     val fondo = Color(0xFF101018)
     val morado = Color(0xFFB5A2FF)
