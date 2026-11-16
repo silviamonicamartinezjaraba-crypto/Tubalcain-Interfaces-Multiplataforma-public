@@ -2,6 +2,7 @@ package net.tubalcain.interfacesmultiplataforma.planazoApp.components
 
 import androidx.compose.animation.animateContentSize
 import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -16,6 +17,7 @@ import androidx.compose.material3.FloatingToolbarDefaults.animationSpec
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -38,6 +40,9 @@ fun EventoCard(
     colorCategoria: Color = Color(0xFFB5A2FF)
 ) {
     val morado = MaterialTheme.colorScheme.primary
+    val colorFondoAnimado by animateColorAsState(
+        targetValue = if (esFavorito) Color(0xFF4A3500) else colorFondo,
+    )
 
     Card(
         modifier = modifier
@@ -49,7 +54,7 @@ fun EventoCard(
         onClick = onClick,
         shape = RoundedCornerShape(12.dp),
         colors = CardDefaults.cardColors(
-            containerColor = colorFondo
+            containerColor = colorFondoAnimado
         )
     ) {
         Row(

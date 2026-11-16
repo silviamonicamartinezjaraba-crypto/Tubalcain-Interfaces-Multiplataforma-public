@@ -299,10 +299,20 @@ fun PlanazoApp() {
                             modoCompacto = modoCompacto,
                             esFavorito = favorito.contains(evento),
                             favoritoClick = {
-                                favorito = if (favorito.contains(evento)){
+                                val esFavorito = favorito.contains(evento)
+                                favorito = if (esFavorito){
                                     favorito - evento
                                 }else{
                                     favorito + evento
+                                }
+
+                                scope.launch {
+                                    val mensaje = if (esFavorito){
+                                        "${evento.nombre} Evento eliminado de favoritos"
+                                    }else{
+                                        "${evento.nombre} Evento añadido a favoritos"
+                                    }
+                                    snackbarHostState.showSnackbar(mensaje)
                                 }
                             },
                             colorFondo = if (evento.categoria == "Música")
