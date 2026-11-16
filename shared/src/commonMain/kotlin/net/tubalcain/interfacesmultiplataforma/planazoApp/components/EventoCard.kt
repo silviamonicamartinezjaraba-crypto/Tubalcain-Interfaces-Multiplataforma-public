@@ -1,7 +1,8 @@
 package net.tubalcain.interfacesmultiplataforma.planazoApp.components
 
-
+import androidx.compose.animation.animateContentSize
 import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -11,12 +12,14 @@ import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.FloatingToolbarDefaults.animationSpec
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.LinkAnnotation
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -29,6 +32,8 @@ fun EventoCard(
     modifier: Modifier = Modifier,
     mostrarDescripcion: Boolean = false,
     modoCompacto: Boolean = false,
+    esFavorito: Boolean = false,
+    favoritoClick: () -> Unit = {},
     colorFondo: Color = Color(0xFF252535),
     colorCategoria: Color = Color(0xFFB5A2FF)
 ) {
@@ -37,7 +42,10 @@ fun EventoCard(
     Card(
         modifier = modifier
             .widthIn(max = 850.dp)
-            .fillMaxWidth(),
+            .fillMaxWidth()
+            .animateContentSize(
+                animationSpec = tween(1000)
+            ),
         onClick = onClick,
         shape = RoundedCornerShape(12.dp),
         colors = CardDefaults.cardColors(
@@ -83,6 +91,15 @@ fun EventoCard(
                         text = evento.descripcion,
                         color = Color.LightGray,
                         modifier = Modifier.padding(top = 8.dp)
+                    )
+                }
+                androidx.compose.material3.TextButton(
+                    onClick = favoritoClick,
+                ) {
+                    Text(
+                        text = if (esFavorito) "★" else "☆",
+                        color = if (esFavorito) Color.Magenta else Color.White,
+                        fontSize = 26.sp
                     )
                 }
             }

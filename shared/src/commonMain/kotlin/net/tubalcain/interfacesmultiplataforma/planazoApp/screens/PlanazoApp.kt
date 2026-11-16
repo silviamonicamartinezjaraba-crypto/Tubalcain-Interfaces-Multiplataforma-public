@@ -96,6 +96,8 @@ fun PlanazoApp() {
     var categoriaElegida by remember { mutableStateOf("Todos") }
     var mostrarDescripciones by remember { mutableStateOf(false) }
     var modoCompacto by remember { mutableStateOf(false) }
+    var favorito by remember { mutableStateOf(setOf<Evento>()) }
+
 
     // NAVEGACIÓN
     var pantalla by remember { mutableStateOf("lista") }
@@ -227,10 +229,10 @@ fun PlanazoApp() {
                     }
 
                     item {
-
-                        Row(
+                        androidx.compose.foundation.layout.FlowRow(
                             modifier = Modifier.fillMaxWidth(),
-                            horizontalArrangement = Arrangement.spacedBy(16.dp)
+                            horizontalArrangement = Arrangement.spacedBy(16.dp),
+                            verticalArrangement = Arrangement.spacedBy(16.dp)
                         ) {
                             BotonLimpiarFiltros(
                                 onClick = {
@@ -282,6 +284,12 @@ fun PlanazoApp() {
                     item {
                         EjemploAnimacion()
                     }
+                    item{
+                        Text(
+                            text = "Favoritos: ${favorito.size}",
+                            color = morado
+                        )
+                    }
 
                     // LISTA DE EVENTOS
                     items(eventosFiltrados) { evento ->
@@ -289,6 +297,14 @@ fun PlanazoApp() {
                             evento = evento,
                             mostrarDescripcion = mostrarDescripciones,
                             modoCompacto = modoCompacto,
+                            esFavorito = favorito.contains(evento),
+                            favoritoClick = {
+                                favorito = if (favorito.contains(evento)){
+                                    favorito - evento
+                                }else{
+                                    favorito + evento
+                                }
+                            },
                             colorFondo = if (evento.categoria == "Música")
                                 Color(0xFF7B2FF7)
                             else
