@@ -1,4 +1,4 @@
-package net.tubalcain.interfacesmultiplataforma.planazoApp
+package net.tubalcain.interfacesmultiplataforma.planazoApp.ejemplos
 
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.core.tween

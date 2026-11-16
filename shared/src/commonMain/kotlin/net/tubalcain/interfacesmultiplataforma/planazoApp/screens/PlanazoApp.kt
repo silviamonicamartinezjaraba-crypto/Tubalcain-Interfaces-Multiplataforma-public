@@ -29,7 +29,6 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -48,9 +47,10 @@ data class Evento(
 )
 
 @Composable
-fun PlanazoApp() { // Nombre actualizado para coincidir con la carpeta del profesor
+fun PlanazoApp() {
 
     val fondo = Color(0xFF101018)
+    val tarjeta = Color(0xFF252535)
     val morado = Color(0xFFB5A2FF)
 
     val eventos = remember {
@@ -94,13 +94,15 @@ fun PlanazoApp() { // Nombre actualizado para coincidir con la carpeta del profe
     }
 
     // ESTADOS
-    var busqueda by rememberSaveable { mutableStateOf("") }
+    var busqueda by remember { mutableStateOf("") }
     var categoriaElegida by remember { mutableStateOf("Todos") }
     var mostrarDescripciones by remember { mutableStateOf(false) }
 
     // NAVEGACIÓN
     var pantalla by remember { mutableStateOf("lista") }
-    var eventoSeleccionado by remember { mutableStateOf<Evento?>(null) }
+    var eventoSeleccionado by remember {
+        mutableStateOf<Evento?>(null)
+    }
 
     // FORMULARIO
     var nombre by remember { mutableStateOf("") }
@@ -112,7 +114,6 @@ fun PlanazoApp() { // Nombre actualizado para coincidir con la carpeta del profe
         evento.nombre.contains(busqueda, ignoreCase = true) &&
                 (categoriaElegida == "Todos" ||
                         evento.categoria == categoriaElegida)
-
     }
 
     // SNACKBAR
@@ -120,6 +121,7 @@ fun PlanazoApp() { // Nombre actualizado para coincidir con la carpeta del profe
     val scope = rememberCoroutineScope()
 
     MaterialTheme {
+
         Scaffold(
             snackbarHost = {
                 SnackbarHost(snackbarHostState)
@@ -141,11 +143,17 @@ fun PlanazoApp() { // Nombre actualizado para coincidir con la carpeta del profe
                         fontWeight = FontWeight.Bold
                     )
 
-                    Text("DAM2", color = morado)
+                    Text(
+                        "DAM2",
+                        color = morado
+                    )
                 }
             }
 
         ) { padding ->
+
+            // La LazyColumn ocupa toda la pantalla.
+            // El contenido se limita a 850.dp.
             LazyColumn(
                 modifier = Modifier
                     .fillMaxSize()
@@ -154,24 +162,44 @@ fun PlanazoApp() { // Nombre actualizado para coincidir con la carpeta del profe
                 horizontalAlignment = Alignment.CenterHorizontally,
                 verticalArrangement = Arrangement.spacedBy(16.dp)
             ) {
+
                 if (pantalla == "lista") {
 
+                    // TÍTULO
                     item {
-                        CabeceraSeccion(
-                            titulo = "¿Qué plan tienes?",
-                            subtitulo = "Descubre eventos que no te puedes perder",
-                            modifier = Modifier.widthIn(max = 850.dp).fillMaxWidth()
-                        )
+                        Column(
+                            modifier = Modifier
+                                .widthIn(max = 850.dp)
+                                .fillMaxWidth()
+                        ) {
+                            Text(
+                                "¿Qué plan tienes?",
+                                color = Color.White,
+                                fontSize = 28.sp,
+                                fontWeight = FontWeight.Bold
+                            )
+
+                            Text(
+                                "Descubre eventos que no te puedes perder",
+                                color = Color.LightGray
+                            )
+                        }
                     }
 
+                    // BUSCADOR
                     item {
                         BuscadorEventos(
                             texto = busqueda,
-                            onTextoChange = { busqueda = it },
-                            modifier = Modifier.widthIn(max = 850.dp).fillMaxWidth()
+                            onTextoChange = { nuevoTexto ->
+                                busqueda = nuevoTexto
+                            },
+                            modifier = Modifier
+                                .widthIn(max = 850.dp)
+                                .fillMaxWidth()
                         )
                     }
 
+                    // FILTROS POR CATEGORÍA
                     item {
                         Row(
                             modifier = Modifier
@@ -180,69 +208,70 @@ fun PlanazoApp() { // Nombre actualizado para coincidir con la carpeta del profe
                                 .horizontalScroll(rememberScrollState()),
                             horizontalArrangement = Arrangement.spacedBy(8.dp)
                         ) {
-                            listOf("Todos", "Música", "Gaming", "Creadores").forEach { categoria ->
+                            listOf(
+                                "Todos",
+                                "Música",
+                                "Gaming",
+                                "Creadores"
+                            ).forEach { categoria ->
+
                                 CategoriaChip(
                                     categoria = categoria,
-                                    seleccionada = categoriaElegida == categoria,
-                                    onClick = { categoriaElegida = categoria }
+                                    seleccionada =
+                                        categoriaElegida == categoria,
+                                    onClick = {
+                                        categoriaElegida = categoria
+                                    }
                                 )
                             }
                         }
                     }
 
                     item {
+
                         Row(
-                            modifier = Modifier.fillMaxWidth().widthIn(max = 850.dp),
+                            modifier = Modifier.fillMaxWidth(),
                             horizontalArrangement = Arrangement.spacedBy(16.dp)
                         ) {
-                            BotonLimpiarFiltros(onClick = {
-                                busqueda = ""
-                                categoriaElegida = "Todos"
-                            })
+                            BotonLimpiarFiltros(
+                                onClick = {
+                                    busqueda = ""
+                                    categoriaElegida = "Todos"
+                                }
+                            )
 
-                            Button(onClick = { mostrarDescripciones = !mostrarDescripciones }) {
-                                Text(if (mostrarDescripciones) "Ocultar descripciones" else "Mostrar descripciones")
+                            Button(
+                                onClick = {
+                                    mostrarDescripciones = !mostrarDescripciones
+                                }
+                            ) {
+                                Text(
+                                    if (mostrarDescripciones)
+                                        "Ocultar descripciones"
+                                    else
+                                        "Mostrar descripciones"
+                                )
                             }
                         }
-                    }
 
-                    item {
-                        CabeceraSeccion(
-                            titulo = "Eventos actuales",
-                            subtitulo = "Apúntate a ellos!",
-                            modifier = Modifier.widthIn(max = 850.dp).fillMaxWidth()
-                        )
                     }
 
                     item {
                         Text(
-                            text = "Eventos encontrados: " + eventosFiltrados.size,
+                            text = "Eventos encontrados: " +
+                                    eventosFiltrados.size,
                             color = Color.LightGray,
-                            modifier = Modifier.widthIn(max = 850.dp).fillMaxWidth()
+                            modifier = Modifier
+                                .widthIn(max = 850.dp)
+                                .fillMaxWidth()
                         )
                     }
 
-                    // Evento destacado integrado (tu código)
-                    if (eventosFiltrados.isNotEmpty()) {
-                        item {
-                            EventoDestacado(
-                                evento = eventosFiltrados[0],
-                                onClick = {
-                                    eventoSeleccionado = eventosFiltrados[0]
-                                    pantalla = "detalle"
-                                    inscrito = false
-                                }
-                            )
-                        }
+                    item {
+                        EjemploAnimacion()
                     }
 
-                    // Animación del profesor
-                    // (Descomenta esto si tienes el archivo EjemploAnimacion.kt en tu proyecto)
-                    // item {
-                    //     EjemploAnimacion()
-                    // }
-
-                    // LISTA DE EVENTOS (Tu código + el color del profesor)
+                    // LISTA DE EVENTOS
                     items(eventosFiltrados) { evento ->
                         EventoCard(
                             evento = evento,
@@ -254,6 +283,7 @@ fun PlanazoApp() { // Nombre actualizado para coincidir con la carpeta del profe
                             onClick = {
                                 eventoSeleccionado = evento
                                 pantalla = "detalle"
+
                                 nombre = ""
                                 correo = ""
                                 inscrito = false
@@ -263,42 +293,75 @@ fun PlanazoApp() { // Nombre actualizado para coincidir con la carpeta del profe
 
                     if (eventosFiltrados.isEmpty()) {
                         item {
-                            EstadoVacio(
-                                emoji = "⬜",
-                                titulo = "No se ha encontrado ningún evento con ese nombre",
-                                mensaje = "Introduce otro evento"
+                            Text(
+                                "No se encontraron eventos",
+                                color = Color.LightGray
                             )
                         }
                     }
 
                 } else {
+
                     // PANTALLA DE DETALLE
                     item {
+
                         Column(
-                            modifier = Modifier.widthIn(max = 850.dp).fillMaxWidth(),
+                            modifier = Modifier
+                                .widthIn(max = 850.dp)
+                                .fillMaxWidth(),
                             verticalArrangement = Arrangement.spacedBy(16.dp)
                         ) {
-                            TextButton(onClick = { pantalla = "lista" }) {
+
+                            TextButton(
+                                onClick = {
+                                    pantalla = "lista"
+                                }
+                            ) {
                                 Text("← Volver")
                             }
 
                             eventoSeleccionado?.let { evento ->
-                                Text(evento.emoji, fontSize = 60.sp)
-                                Text(evento.nombre, color = Color.White, fontSize = 28.sp, fontWeight = FontWeight.Bold)
-                                Text(evento.fecha, color = morado, fontSize = 18.sp)
-                                Text(evento.descripcion, color = Color.LightGray)
+
+                                Text(
+                                    evento.emoji,
+                                    fontSize = 60.sp
+                                )
+
+                                Text(
+                                    evento.nombre,
+                                    color = Color.White,
+                                    fontSize = 28.sp,
+                                    fontWeight = FontWeight.Bold
+                                )
+
+                                Text(
+                                    evento.fecha,
+                                    color = morado,
+                                    fontSize = 18.sp
+                                )
+
+                                Text(
+                                    evento.descripcion,
+                                    color = Color.LightGray
+                                )
 
                                 HorizontalDivider()
 
-                                CabeceraSeccion(
-                                    titulo = "¿Qué plan tienes?",
-                                    modifier = Modifier.widthIn(max = 850.dp).fillMaxWidth()
+                                Text(
+                                    "Apúntate al evento",
+                                    color = Color.White,
+                                    fontSize = 22.sp,
+                                    fontWeight = FontWeight.Bold
                                 )
 
                                 OutlinedTextField(
                                     value = nombre,
-                                    onValueChange = { nombre = it },
-                                    label = { Text("Nombre") },
+                                    onValueChange = {
+                                        nombre = it
+                                    },
+                                    label = {
+                                        Text("Nombre")
+                                    },
                                     modifier = Modifier.fillMaxWidth(),
                                     singleLine = true,
                                     colors = OutlinedTextFieldDefaults.colors(
@@ -314,8 +377,12 @@ fun PlanazoApp() { // Nombre actualizado para coincidir con la carpeta del profe
 
                                 OutlinedTextField(
                                     value = correo,
-                                    onValueChange = { correo = it },
-                                    label = { Text("Correo electrónico") },
+                                    onValueChange = {
+                                        correo = it
+                                    },
+                                    label = {
+                                        Text("Correo electrónico")
+                                    },
                                     modifier = Modifier.fillMaxWidth(),
                                     singleLine = true,
                                     colors = OutlinedTextFieldDefaults.colors(
@@ -333,12 +400,30 @@ fun PlanazoApp() { // Nombre actualizado para coincidir con la carpeta del profe
                                     onClick = {
                                         scope.launch {
                                             when {
-                                                nombre.isBlank() -> snackbarHostState.showSnackbar("Introduce tu nombre")
-                                                correo.isBlank() -> snackbarHostState.showSnackbar("Introduce tu correo electrónico")
-                                                !correo.contains("@") -> snackbarHostState.showSnackbar("Introduce un correo electrónico válido")
+                                                nombre.isBlank() -> {
+                                                    snackbarHostState.showSnackbar(
+                                                        "Introduce tu nombre"
+                                                    )
+                                                }
+
+                                                correo.isBlank() -> {
+                                                    snackbarHostState.showSnackbar(
+                                                        "Introduce tu correo electrónico"
+                                                    )
+                                                }
+
+                                                !correo.contains("@") -> {
+                                                    snackbarHostState.showSnackbar(
+                                                        "Introduce un correo electrónico válido"
+                                                    )
+                                                }
+
                                                 else -> {
                                                     inscrito = true
-                                                    snackbarHostState.showSnackbar("¡Inscripción realizada correctamente!")
+
+                                                    snackbarHostState.showSnackbar(
+                                                        "¡Inscripción realizada correctamente!"
+                                                    )
                                                 }
                                             }
                                         }
@@ -348,8 +433,13 @@ fun PlanazoApp() { // Nombre actualizado para coincidir con la carpeta del profe
                                     Text("Apuntarme")
                                 }
 
+
                                 if (inscrito) {
-                                    Text("¡Inscripción simulada completada!", color = morado, fontWeight = FontWeight.Bold)
+                                    Text(
+                                        "¡Inscripción simulada completada!",
+                                        color = morado,
+                                        fontWeight = FontWeight.Bold
+                                    )
                                 }
                             }
                         }

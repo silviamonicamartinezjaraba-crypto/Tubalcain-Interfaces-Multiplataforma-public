@@ -1,4 +1,4 @@
-package net.tubalcain.interfacesmultiplataforma.planazoApp
+package net.tubalcain.interfacesmultiplataforma.planazoApp.components
 
 
 import androidx.compose.animation.AnimatedVisibility
@@ -11,6 +11,7 @@ import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -19,6 +20,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import net.tubalcain.interfacesmultiplataforma.planazoApp.model.Evento
 
 @Composable
 fun EventoCard(
@@ -29,8 +31,7 @@ fun EventoCard(
     colorFondo: Color = Color(0xFF252535),
     colorCategoria: Color = Color(0xFFB5A2FF)
 ) {
-    val tarjeta = Color(0xFF252535)
-    val morado = Color(0xFFB5A2FF)
+    val morado = MaterialTheme.colorScheme.primary
 
     Card(
         modifier = modifier

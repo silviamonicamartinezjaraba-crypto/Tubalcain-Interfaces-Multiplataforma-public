@@ -1,4 +1,4 @@
-package net.tubalcain.interfacesmultiplataforma.planazoApp
+package net.tubalcain.interfacesmultiplataforma.planazoApp.components
 
 
 import androidx.compose.material3.FilterChip
