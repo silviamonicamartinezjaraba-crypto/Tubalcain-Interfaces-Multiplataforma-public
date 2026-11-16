@@ -1,6 +1,5 @@
 package net.tubalcain.interfacesmultiplataforma.planazoApp
 
-import BotonLimpiarFiltros
 import androidx.compose.foundation.background
 import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Arrangement
@@ -37,14 +36,13 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import kotlinx.coroutines.launch
+import net.tubalcain.interfacesmultiplataforma.planazoApp.components.BotonLimpiarFiltros
+import net.tubalcain.interfacesmultiplataforma.planazoApp.components.BuscadorEventos
+import net.tubalcain.interfacesmultiplataforma.planazoApp.components.CategoriaChip
+import net.tubalcain.interfacesmultiplataforma.planazoApp.components.EventoCard
+import net.tubalcain.interfacesmultiplataforma.planazoApp.ejemplos.EjemploAnimacion
+import net.tubalcain.interfacesmultiplataforma.planazoApp.model.Evento
 
-data class Evento(
-    val nombre: String,
-    val categoria: String,
-    val fecha: String,
-    val emoji: String,
-    val descripcion: String
-)
 
 @Composable
 fun PlanazoApp() {
