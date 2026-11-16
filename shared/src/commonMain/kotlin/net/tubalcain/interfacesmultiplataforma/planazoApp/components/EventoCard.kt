@@ -28,6 +28,7 @@ fun EventoCard(
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
     mostrarDescripcion: Boolean = false,
+    modoCompacto: Boolean = false,
     colorFondo: Color = Color(0xFF252535),
     colorCategoria: Color = Color(0xFFB5A2FF)
 ) {
@@ -64,16 +65,16 @@ fun EventoCard(
                     fontSize = 20.sp,
                     fontWeight = FontWeight.Bold
                 )
-
-                Text(
-                    text = evento.categoria,
-                    color = colorCategoria
-                )
-
-                Text(
-                    text = evento.fecha,
-                    color = Color.LightGray
-                )
+                if (!modoCompacto){
+                    Text(
+                        text = evento.categoria,
+                        color = colorCategoria
+                    )
+                    Text(
+                        text = evento.fecha,
+                        color = Color.LightGray
+                    )
+                }
 
                 AnimatedVisibility(
                     visible = mostrarDescripcion

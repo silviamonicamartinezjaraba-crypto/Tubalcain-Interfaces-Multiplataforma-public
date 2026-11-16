@@ -33,6 +33,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import kotlinx.coroutines.launch
@@ -42,7 +43,6 @@ import net.tubalcain.interfacesmultiplataforma.planazoApp.components.CategoriaCh
 import net.tubalcain.interfacesmultiplataforma.planazoApp.components.EventoCard
 import net.tubalcain.interfacesmultiplataforma.planazoApp.ejemplos.EjemploAnimacion
 import net.tubalcain.interfacesmultiplataforma.planazoApp.model.Evento
-
 
 @Composable
 fun PlanazoApp() {
@@ -95,6 +95,7 @@ fun PlanazoApp() {
     var busqueda by remember { mutableStateOf("") }
     var categoriaElegida by remember { mutableStateOf("Todos") }
     var mostrarDescripciones by remember { mutableStateOf(false) }
+    var modoCompacto by remember { mutableStateOf(false) }
 
     // NAVEGACIÓN
     var pantalla by remember { mutableStateOf("lista") }
@@ -250,6 +251,19 @@ fun PlanazoApp() {
                                         "Mostrar descripciones"
                                 )
                             }
+                            Button(
+                                onClick = {
+                                    modoCompacto = !modoCompacto
+                                }
+                            ){
+                                Text(
+                                    if (modoCompacto)
+                                        "Modo normal"
+                                    else
+                                        "Modo compacto"
+                                )
+                            }
+
                         }
 
                     }
@@ -274,10 +288,12 @@ fun PlanazoApp() {
                         EventoCard(
                             evento = evento,
                             mostrarDescripcion = mostrarDescripciones,
+                            modoCompacto = modoCompacto,
                             colorFondo = if (evento.categoria == "Música")
                                 Color(0xFF7B2FF7)
                             else
                                 Color(0xFF252535),
+                                //MaterialTheme.colorScheme.surface,
                             onClick = {
                                 eventoSeleccionado = evento
                                 pantalla = "detalle"
