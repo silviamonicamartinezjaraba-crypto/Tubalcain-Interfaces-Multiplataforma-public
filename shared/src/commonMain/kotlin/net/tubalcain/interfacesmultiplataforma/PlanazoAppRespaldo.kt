@@ -1,5 +1,4 @@
-package net.tubalcain.interfacesmultiplataforma
-
+package net.tubalcain.interfacesmultiplataforma.planazoApp.screens
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.horizontalScroll
@@ -34,16 +33,19 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import kotlinx.coroutines.launch
+import net.tubalcain.interfacesmultiplataforma.planazoApp.ejemplos.EjemploAnimacion
 import net.tubalcain.interfacesmultiplataforma.planazoApp.components.BotonLimpiarFiltros
 import net.tubalcain.interfacesmultiplataforma.planazoApp.components.BuscadorEventos
 import net.tubalcain.interfacesmultiplataforma.planazoApp.components.CategoriaChip
+import net.tubalcain.interfacesmultiplataforma.planazoApp.components.DatoRapidoHorizontal
+import net.tubalcain.interfacesmultiplataforma.planazoApp.components.DatoRapidoVertical
 import net.tubalcain.interfacesmultiplataforma.planazoApp.components.EventoCard
-import net.tubalcain.interfacesmultiplataforma.planazoApp.ejemplos.EjemploAnimacion
+import net.tubalcain.interfacesmultiplataforma.planazoApp.components.PanelContenido
 import net.tubalcain.interfacesmultiplataforma.planazoApp.model.Evento
+import net.tubalcain.interfacesmultiplataforma.planazoApp.theme.PlanazoTheme
 
 @Composable
 fun PlanazoApp() {
@@ -96,9 +98,6 @@ fun PlanazoApp() {
     var busqueda by remember { mutableStateOf("") }
     var categoriaElegida by remember { mutableStateOf("Todos") }
     var mostrarDescripciones by remember { mutableStateOf(false) }
-    var modoCompacto by remember { mutableStateOf(false) }
-    var favorito by remember { mutableStateOf(setOf<Evento>()) }
-
 
     // NAVEGACIÓN
     var pantalla by remember { mutableStateOf("lista") }
@@ -122,7 +121,7 @@ fun PlanazoApp() {
     val snackbarHostState = remember { SnackbarHostState() }
     val scope = rememberCoroutineScope()
 
-    MaterialTheme {
+    PlanazoTheme {
 
         Scaffold(
             snackbarHost = {
@@ -230,10 +229,10 @@ fun PlanazoApp() {
                     }
 
                     item {
-                        androidx.compose.foundation.layout.FlowRow(
+
+                        Row(
                             modifier = Modifier.fillMaxWidth(),
-                            horizontalArrangement = Arrangement.spacedBy(16.dp),
-                            verticalArrangement = Arrangement.spacedBy(16.dp)
+                            horizontalArrangement = Arrangement.spacedBy(16.dp)
                         ) {
                             BotonLimpiarFiltros(
                                 onClick = {
@@ -254,73 +253,45 @@ fun PlanazoApp() {
                                         "Mostrar descripciones"
                                 )
                             }
-                            Button(
-                                onClick = {
-                                    modoCompacto = !modoCompacto
-                                }
-                            ){
-                                Text(
-                                    if (modoCompacto)
-                                        "Modo normal"
-                                    else
-                                        "Modo compacto"
-                                )
-                            }
-
                         }
 
                     }
 
                     item {
-                        Text(
-                            text = "Eventos encontrados: " +
-                                    eventosFiltrados.size,
-                            color = Color.LightGray,
+                        DatoRapidoHorizontal(
+                            etiqueta = "Eventos encontrados:",
+                            valor = eventosFiltrados.size.toString(),
                             modifier = Modifier
                                 .widthIn(max = 850.dp)
                                 .fillMaxWidth()
                         )
                     }
 
+
+
                     item {
-                        EjemploAnimacion()
+                        PanelContenido(
+                            titulo = "Ejemplos de componentes",
+                            modifier = Modifier.widthIn(max = 850.dp)
+                        ) {
+                            Text(
+                                text = "Un panel puede contener cualquier componente."
+                            )
+
+                            EjemploAnimacion()
+                        }
                     }
-                    item{
-                        Text(
-                            text = "Favoritos: ${favorito.size}",
-                            color = morado
-                        )
-                    }
+
 
                     // LISTA DE EVENTOS
                     items(eventosFiltrados) { evento ->
                         EventoCard(
                             evento = evento,
                             mostrarDescripcion = mostrarDescripciones,
-                            modoCompacto = modoCompacto,
-                            esFavorito = favorito.contains(evento),
-                            favoritoClick = {
-                                val esFavorito = favorito.contains(evento)
-                                favorito = if (esFavorito){
-                                    favorito - evento
-                                }else{
-                                    favorito + evento
-                                }
-
-                                scope.launch {
-                                    val mensaje = if (esFavorito){
-                                        "${evento.nombre} Evento eliminado de favoritos"
-                                    }else{
-                                        "${evento.nombre} Evento añadido a favoritos"
-                                    }
-                                    snackbarHostState.showSnackbar(mensaje)
-                                }
-                            },
                             colorFondo = if (evento.categoria == "Música")
                                 Color(0xFF7B2FF7)
                             else
                                 Color(0xFF252535),
-                            //MaterialTheme.colorScheme.surface,
                             onClick = {
                                 eventoSeleccionado = evento
                                 pantalla = "detalle"
@@ -375,11 +346,21 @@ fun PlanazoApp() {
                                     fontWeight = FontWeight.Bold
                                 )
 
-                                Text(
-                                    evento.fecha,
-                                    color = morado,
-                                    fontSize = 18.sp
-                                )
+
+                                PanelContenido(
+                                    titulo = "Información del evento"
+                                ) {
+                                    DatoRapidoVertical(
+                                        etiqueta = "Categoría",
+                                        valor = evento.categoria
+                                    )
+
+                                    DatoRapidoVertical(
+                                        etiqueta = "Fecha y hora",
+                                        valor = evento.fecha
+                                    )
+                                }
+
 
                                 Text(
                                     evento.descripcion,
