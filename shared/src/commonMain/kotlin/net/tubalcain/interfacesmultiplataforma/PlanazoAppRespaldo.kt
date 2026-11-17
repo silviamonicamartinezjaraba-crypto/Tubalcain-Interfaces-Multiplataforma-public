@@ -1,4 +1,5 @@
-package net.tubalcain.interfacesmultiplataforma.planazoApp
+package net.tubalcain.interfacesmultiplataforma
+
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.horizontalScroll
@@ -319,7 +320,7 @@ fun PlanazoApp() {
                                 Color(0xFF7B2FF7)
                             else
                                 Color(0xFF252535),
-                                //MaterialTheme.colorScheme.surface,
+                            //MaterialTheme.colorScheme.surface,
                             onClick = {
                                 eventoSeleccionado = evento
                                 pantalla = "detalle"
