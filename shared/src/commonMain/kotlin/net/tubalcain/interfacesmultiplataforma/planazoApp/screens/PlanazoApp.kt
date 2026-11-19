@@ -15,6 +15,7 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.material3.Button
 import androidx.compose.material3.HorizontalDivider
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Scaffold
@@ -42,10 +43,9 @@ import net.tubalcain.interfacesmultiplataforma.planazoApp.components.DatoRapidoH
 import net.tubalcain.interfacesmultiplataforma.planazoApp.components.DatoRapidoVertical
 import net.tubalcain.interfacesmultiplataforma.planazoApp.components.EventoCard
 import net.tubalcain.interfacesmultiplataforma.planazoApp.components.PanelContenido
-import net.tubalcain.interfacesmultiplataforma.planazoApp.ejemplos.EjemploAnimacion
-import net.tubalcain.interfacesmultiplataforma.planazoApp.ejemplos.EjemploClickable
-import net.tubalcain.interfacesmultiplataforma.planazoApp.ejemplos.EjemploCombinedClickable
-import net.tubalcain.interfacesmultiplataforma.planazoApp.ejemplos.EjemploModifiers
+import net.tubalcain.interfacesmultiplataforma.planazoApp.components.ResumenCategoria
+import net.tubalcain.interfacesmultiplataforma.planazoApp.logic.contarEventosPorCategoria
+import net.tubalcain.interfacesmultiplataforma.planazoApp.logic.filtrarEventos
 import net.tubalcain.interfacesmultiplataforma.planazoApp.model.Evento
 import net.tubalcain.interfacesmultiplataforma.planazoApp.theme.PlanazoTheme
 
@@ -53,8 +53,11 @@ import net.tubalcain.interfacesmultiplataforma.planazoApp.theme.PlanazoTheme
 fun PlanazoApp() {
 
     val fondo = Color(0xFF101018)
-    val tarjeta = Color(0xFF252535)
     val morado = Color(0xFFB5A2FF)
+
+    val categorias = remember {
+        listOf("Todos", "Música", "Gaming", "Creadores")
+    }
 
     val eventos = remember {
         listOf(
@@ -100,6 +103,7 @@ fun PlanazoApp() {
     var busqueda by remember { mutableStateOf("") }
     var categoriaElegida by remember { mutableStateOf("Todos") }
     var mostrarDescripciones by remember { mutableStateOf(false) }
+    var favoritos by remember { mutableStateOf(setOf<Evento>()) }
 
     // NAVEGACIÓN
     var pantalla by remember { mutableStateOf("lista") }
@@ -113,11 +117,11 @@ fun PlanazoApp() {
     var inscrito by remember { mutableStateOf(false) }
 
     // FILTRADO
-    val eventosFiltrados = eventos.filter { evento ->
-        evento.nombre.contains(busqueda, ignoreCase = true) &&
-                (categoriaElegida == "Todos" ||
-                        evento.categoria == categoriaElegida)
-    }
+    val eventosFiltrados = filtrarEventos(
+        eventos = eventos,
+        busqueda = busqueda,
+        categoriaElegida = categoriaElegida
+    )
 
     // SNACKBAR
     val snackbarHostState = remember { SnackbarHostState() }
@@ -211,13 +215,7 @@ fun PlanazoApp() {
                                 .horizontalScroll(rememberScrollState()),
                             horizontalArrangement = Arrangement.spacedBy(8.dp)
                         ) {
-                            listOf(
-                                "Todos",
-                                "Música",
-                                "Gaming",
-                                "Creadores"
-                            ).forEach { categoria ->
-
+                            categorias.forEach { categoria ->
                                 CategoriaChip(
                                     categoria = categoria,
                                     seleccionada =
@@ -230,10 +228,12 @@ fun PlanazoApp() {
                         }
                     }
 
+                    // ACCIONES DE FILTRO Y DESCRIPCIONES
                     item {
-
                         Row(
-                            modifier = Modifier.fillMaxWidth(),
+                            modifier = Modifier
+                                .widthIn(max = 850.dp)
+                                .fillMaxWidth(),
                             horizontalArrangement = Arrangement.spacedBy(16.dp)
                         ) {
                             BotonLimpiarFiltros(
@@ -256,9 +256,9 @@ fun PlanazoApp() {
                                 )
                             }
                         }
-
                     }
 
+                    // CONTADOR DE EVENTOS ENCONTRADOS
                     item {
                         DatoRapidoHorizontal(
                             etiqueta = "Eventos encontrados:",
@@ -269,38 +269,80 @@ fun PlanazoApp() {
                         )
                     }
 
-                    item {
-                        EjemploModifiers()
-                    }
-
-                    item {
-                        Column(
-                            verticalArrangement = Arrangement.spacedBy(16.dp)
-                        ) {
-                            EjemploClickable()
-                            EjemploCombinedClickable()
-                        }
-                    }
-
+                    // PANEL DE RESUMEN POR CATEGORÍAS (SLOTS)
                     item {
                         PanelContenido(
-                            titulo = "Ejemplos de componentes",
-                            modifier = Modifier.widthIn(max = 850.dp)
+                            titulo = "Resumen por categorías",
+                            modifier = Modifier
+                                .widthIn(max = 850.dp)
+                                .fillMaxWidth()
                         ) {
                             Text(
-                                text = "Un panel puede contener cualquier componente."
+                                text = "Selecciona una categoría para filtrar",
+                                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                                style = MaterialTheme.typography.bodySmall
                             )
 
-                            EjemploAnimacion()
+                            categorias.chunked(2).forEach { filaCategorias ->
+                                Row(
+                                    modifier = Modifier.fillMaxWidth(),
+                                    horizontalArrangement = Arrangement.spacedBy(12.dp)
+                                ) {
+                                    filaCategorias.forEach { categoria ->
+                                        ResumenCategoria(
+                                            categoria = categoria,
+                                            cantidad = contarEventosPorCategoria(
+                                                eventos = eventos,
+                                                categoria = categoria
+                                            ),
+                                            seleccionada = categoriaElegida == categoria,
+                                            onClick = {
+                                                categoriaElegida = categoria
+                                            },
+                                            modifier = Modifier.weight(1f)
+                                        )
+                                    }
+                                }
+                            }
                         }
                     }
 
+                    // CABECERA DE EVENTOS DISPONIBLES
+                    item {
+                        Text(
+                            text = "Eventos disponibles",
+                            color = MaterialTheme.colorScheme.onBackground,
+                            style = MaterialTheme.typography.titleLarge,
+                            fontWeight = FontWeight.Bold,
+                            modifier = Modifier
+                                .widthIn(max = 850.dp)
+                                .fillMaxWidth()
+                        )
+                    }
 
                     // LISTA DE EVENTOS
                     items(eventosFiltrados) { evento ->
                         EventoCard(
                             evento = evento,
                             mostrarDescripcion = mostrarDescripciones,
+                            esFavorito = evento in favoritos,
+                            favoritoClick = {
+                                val eraFavorito = evento in favoritos
+                                favoritos = if (eraFavorito) {
+                                    favoritos - evento
+                                } else {
+                                    favoritos + evento
+                                }
+
+                                scope.launch {
+                                    val mensaje = if (eraFavorito) {
+                                        "${evento.nombre} eliminado de favoritos"
+                                    } else {
+                                        "${evento.nombre} añadido a favoritos"
+                                    }
+                                    snackbarHostState.showSnackbar(mensaje)
+                                }
+                            },
                             colorFondo = if (evento.categoria == "Música")
                                 Color(0xFF7B2FF7)
                             else
@@ -359,7 +401,6 @@ fun PlanazoApp() {
                                     fontWeight = FontWeight.Bold
                                 )
 
-
                                 PanelContenido(
                                     titulo = "Información del evento"
                                 ) {
@@ -373,7 +414,6 @@ fun PlanazoApp() {
                                         valor = evento.fecha
                                     )
                                 }
-
 
                                 Text(
                                     evento.descripcion,
@@ -467,7 +507,6 @@ fun PlanazoApp() {
                                 ) {
                                     Text("Apuntarme")
                                 }
-
 
                                 if (inscrito) {
                                     Text(

@@ -13,7 +13,6 @@ import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.FloatingToolbarDefaults.animationSpec
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -21,13 +20,9 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-<<<<<<< HEAD
-import androidx.compose.ui.text.LinkAnnotation
-=======
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.semantics.stateDescription
->>>>>>> main
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -68,17 +63,14 @@ fun EventoCard(
         modifier = modifier
             .widthIn(max = 850.dp)
             .fillMaxWidth()
-<<<<<<< HEAD
             .animateContentSize(
                 animationSpec = tween(1000)
-            ),
-=======
+            )
             .semantics {
                 stateDescription =
                     "Evento: ${evento.nombre}, " +
                             "categoría: ${evento.categoria}"
             },
->>>>>>> main
         onClick = onClick,
         shape = RoundedCornerShape(12.dp),
         colors = CardDefaults.cardColors(
