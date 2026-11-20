@@ -4,6 +4,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
@@ -103,6 +104,7 @@ fun PlanazoApp() {
     var busqueda by remember { mutableStateOf("") }
     var categoriaElegida by remember { mutableStateOf("Todos") }
     var mostrarDescripciones by remember { mutableStateOf(false) }
+    var modoCompacto by remember { mutableStateOf(false) }
     var favoritos by remember { mutableStateOf(setOf<Evento>()) }
 
     // NAVEGACIÓN
@@ -230,11 +232,12 @@ fun PlanazoApp() {
 
                     // ACCIONES DE FILTRO Y DESCRIPCIONES
                     item {
-                        Row(
+                        FlowRow(
                             modifier = Modifier
                                 .widthIn(max = 850.dp)
                                 .fillMaxWidth(),
-                            horizontalArrangement = Arrangement.spacedBy(16.dp)
+                            horizontalArrangement = Arrangement.spacedBy(12.dp),
+                            verticalArrangement = Arrangement.spacedBy(8.dp)
                         ) {
                             BotonLimpiarFiltros(
                                 onClick = {
@@ -253,6 +256,19 @@ fun PlanazoApp() {
                                         "Ocultar descripciones"
                                     else
                                         "Mostrar descripciones"
+                                )
+                            }
+
+                            Button(
+                                onClick = {
+                                    modoCompacto = !modoCompacto
+                                }
+                            ) {
+                                Text(
+                                    if (modoCompacto)
+                                        "Modo normal"
+                                    else
+                                        "Modo compacto"
                                 )
                             }
                         }
@@ -325,6 +341,7 @@ fun PlanazoApp() {
                         EventoCard(
                             evento = evento,
                             mostrarDescripcion = mostrarDescripciones,
+                            modoCompacto = modoCompacto,
                             esFavorito = evento in favoritos,
                             favoritoClick = {
                                 val eraFavorito = evento in favoritos
